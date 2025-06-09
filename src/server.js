@@ -12,12 +12,33 @@ app.use(cors());         // Middleware de CORS
 app.use(express.json()); // Middleware para parsear y comprender JSON
 
 app.get('/api/alumnos/', async (req, res) => {
+    
+    try{
+        res.send.status(200);
+
+    }
+
+    catch(error){
+        Retorna status 500 (Internal Server Error) y el error (obtenido en el catch), en cualquier otro error.
+
+    }
     },
 
-app.get('/api/alumnos/:id', async (req, res) => {...}
-app.post('/api/alumnos/', async (req, res) => {...}
-app.put('/api/alumnos/', async (req, res) => {...}
-app.delete('/api/alumnos/:id', async (req, res) => {...}
+app.get('/api/alumnos/:id', async (req, res) => {
+
+},
+
+app.post('/api/alumnos/', async (req, res) => {
+
+},
+
+app.put('/api/alumnos/', async (req, res) => {
+
+},
+
+app.delete('/api/alumnos/:id', async (req, res) => {
+
+}),
 
 
 //
@@ -27,7 +48,5 @@ app.delete('/api/alumnos/:id', async (req, res) => {...}
 //
 
 app.listen(port, () => {
-
     console.log(`Example app listening on port ${port}`)
-
-})
+}),
