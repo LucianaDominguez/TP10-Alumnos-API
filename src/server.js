@@ -107,9 +107,44 @@ app.post('/api/alumnos/', async (req, res) => {
 
 }),
 
-// app.put('/api/alumnos/', async (req, res) => {
+app.put('/api/alumnos/', async (req, res) => {
 
-// }),
+    app.use(express.json())
+    const client = new Client(config)
+    const { nombre, apellido, id_curso, fecha_nacimiento, hace_deportes } = req.body;
+ 
+    try{
+        await client.connect()
+
+        const sql =  'UPDATE (nombre, apellido, id_curso, fecha_nacimiento, hace_deportes) SET ($1, $2, $3, $4, $5) WHERE id = $1';
+        const values = ['Harry', 'Stylesheet', '4', '1994-02-01', '1' ]
+        const result = await client.query(sql, values);    
+
+        console.log("entro a try")
+        if(todoCool){
+            res.status(201);
+        }
+
+        else if(nombre == null || apellido == null || id_curso == null || fecha_nacimiento == null || hace_deportes == null){
+            res.status(400).send("Información vacía");
+        }
+        
+        else if (id == -1){
+            res.status(404).send("Alumno inexsitente");
+
+        }
+    }
+
+    catch(error){
+        console.log(error)
+        res.status(500).send(error);
+    }
+
+    finally{
+        await client.end()
+    }
+
+}),
 
 app.delete('/api/alumnos/:id', async (req, res) => {
 
