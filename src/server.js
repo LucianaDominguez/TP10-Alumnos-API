@@ -1,6 +1,6 @@
 import express  from "express"; // hacer npm i express
 import cors     from "cors";    // hacer npm i cors
-import config from './configs/db-config.js'
+import config from './configs/config.js'
 import pkg from 'pg'
 
 
@@ -12,29 +12,58 @@ app.use(cors());         // Middleware de CORS
 app.use(express.json()); // Middleware para parsear y comprender JSON
 
 app.get('/api/alumnos/', async (req, res) => {
-    
+    const client = new Client(config)
+    console.log("entre e alumnos")
     try{
-        res.send.status(200);
+        await client.connect()
+        let sql =  `SELECT * FROM Alumnos`
+        let alumnos = await client.query(sql);
+        res.status(200).send(alumnos.rows);
 
     }
 
     catch(error){
-        Retorna status 500 (Internal Server Error) y el error (obtenido en el catch), en cualquier otro error.
-
+        res.status(500).send(error);
+        console.log(error)
     }
-    },
+
+    finally{
+        await client.end()
+    }
+
+});
 
 app.get('/api/alumnos/:id', async (req, res) => {
+    const client = new Client(config)
 
-},
+    try{
+        await client.connect()
 
-app.post('/api/alumnos/', async (req, res) => {
+        let sql =  'SELECT * FROM Alumnos WHERE id = $1'
+        const values = [id]
+        const result = await client.query(sql, values);
+    
+        res.status(200).send(result.rows[0]);
 
-},
+    }
 
-app.put('/api/alumnos/', async (req, res) => {
+    catch(error){
+        res.status(500).send(error);
+    }
 
-},
+    finally{
+        await client.end()
+    }
+
+}),
+
+// app.post('/api/alumnos/', async (req, res) => {
+
+// }),
+
+// app.put('/api/alumnos/', async (req, res) => {
+
+// }),
 
 app.delete('/api/alumnos/:id', async (req, res) => {
 
@@ -48,5 +77,5 @@ app.delete('/api/alumnos/:id', async (req, res) => {
 //
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-}),
+    console.log(`Listening on: https://localhost:${port}`)
+})
