@@ -7,7 +7,7 @@ import pkg from 'pg'
 const { Client }  = pkg;
 const app  = express();
 const port = 3000;
-const alumnosArray = [];
+let alumnosArray = [];
 
 
 app.use(cors());         // Middleware de CORS
@@ -45,7 +45,7 @@ app.get('/api/alumnos/:id', async (req, res) => {
 
         const sql =  'SELECT * FROM Alumnos WHERE id = $1'
         const values = [id]
-        const result = await client.query(sql, values);    
+        let result = await client.query(sql, values);    
 
         res.status(200).send(result.rows[0]);
     }
@@ -68,16 +68,19 @@ app.get('/api/alumnos/:id', async (req, res) => {
 }),
 
 app.post('/api/alumnos/', async (req, res) => {
-    const client = new Client(config)
 
+    app.use(express.json())
+    const client = new Client(config)
+    const { nombre, apellido, id_curso, fecha_nacimiento, hace_deportes } = req.body;
+ 
     try{
         await client.connect()
 
-        const sql =  'INSERT INTO Alumnos (nombre, apellido, id_curso, fecha_nacimiento, hace_deportes) VALUES ($1, $2, $3, $4, $5)';
+        const sql =  'INSERT INTO alumnos (nombre, apellido, id_curso, fecha_nacimiento, hace_deportes) VALUES ($1, $2, $3, $4, $5)';
         const values = ['Harry', 'Stylesheet', '4', '1994-02-01', '1' ]
         const result = await client.query(sql, values);    
 
-
+        console.log("entro a try")
         if(todoCool){
             res.status(201);
         }
