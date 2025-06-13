@@ -7,6 +7,8 @@ import pkg from 'pg'
 const { Client }  = pkg;
 const app  = express();
 const port = 3000;
+const alumnosArray = [];
+
 
 app.use(cors());         // Middleware de CORS
 app.use(express.json()); // Middleware para parsear y comprender JSON
@@ -35,19 +37,32 @@ app.get('/api/alumnos/', async (req, res) => {
 
 app.get('/api/alumnos/:id', async (req, res) => {
     const client = new Client(config)
+    const id = req.params.id
 
     try{
         await client.connect()
 
-        let sql =  'SELECT * FROM Alumnos WHERE id = $1'
+        const sql =  'SELECT * FROM Alumnos WHERE id = $1'
         const values = [id]
-        const result = await client.query(sql, values);
-    
-        res.status(200).send(result.rows[0]);
+        const result = await client.query(sql, values);    
 
+
+        if(!isNaN(id)){
+            res.status(200).send(result.rows[0]);
+        }
+
+        else if(isNaN(id)){
+            res.status(400).send("ID inválido");
+        }
+        
+        else if (id == -1){
+            res.status(404).send("Alumno inexsitente");
+
+        }
     }
 
     catch(error){
+        console.log(error)
         res.status(500).send(error);
     }
 
@@ -57,9 +72,11 @@ app.get('/api/alumnos/:id', async (req, res) => {
 
 }),
 
-// app.post('/api/alumnos/', async (req, res) => {
+app.post('/api/alumnos/', async (req, res) => {
+    alumnosArray.push(new Alumno(req.body));
+    res.json(alumnosArray);
 
-// }),
+}),
 
 // app.put('/api/alumnos/', async (req, res) => {
 
@@ -77,5 +94,5 @@ app.delete('/api/alumnos/:id', async (req, res) => {
 //
 
 app.listen(port, () => {
-    console.log(`Listening on: https://localhost:${port}`)
+    console.log(`Listening on: http://localhost:${port}`)
 })
