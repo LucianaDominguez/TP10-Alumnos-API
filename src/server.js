@@ -108,20 +108,20 @@ app.put('/api/alumnos/', async (req, res) => {
     try{
         await client.connect()
 
-        const sql =  'UPDATE (id, nombre, apellido, id_curso, fecha_nacimiento, hace_deportes) SET ($1, $2, $3, $4, $5) WHERE id = $1';
-        const values = ['Harry', 'Stylesheet', '4', '1994-02-01', '1' ]
+        const sql = `UPDATE alumnos SET nombre = $2, apellido = $3, id_curso = $4, fecha_nacimiento = $5, hace_deportes = $6 WHERE id = $1`;
+        const values = [id, nombre, apellido, id_curso, fecha_nacimiento, hace_deportes]
         const result = await client.query(sql, values);    
 
         console.log("entro a try")
-        if(todoCool){
+        if(result.rowCount > 0){
             res.status(201).send("Actualización exitosa!");
         }
 
-        else if(nombre == null || apellido == null || id_curso == null || fecha_nacimiento == null || hace_deportes == null){
+        else if(id == null | nombre == null || apellido == null || id_curso == null || fecha_nacimiento == null || hace_deportes == null){
             res.status(400).send("Información vacía!");
         }
         
-        else if (id == -1){
+        else if (result.rowCount < 0){
             res.status(404).send("Alumno inexsitente!");
 
         }
